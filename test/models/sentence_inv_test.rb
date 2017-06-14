@@ -17,6 +17,22 @@ class SentenceInvTest < ActiveSupport::TestCase
     assert_equal iemail.user_inv.object_id, iuser.object_id
   end
 
+  # describe "inverse_of on simple has_many/belongs_to relations"
+  #
+  test "without inverse_of on has_many articles.author triggers a db hit" do
+    author = Author.create(name: 'Harry')
+    article = author.articles.create(name: 'A History of Quidditch')
+
+    assert_not_equal article.author.object_id, author.object_id
+  end
+
+  test "with inverse_of on has_many articles.author no db hit and object_ids are equal/one instance" do
+    iauthor = AuthorInv.create(name: 'Harry')
+    iarticle = iauthor.article_invs.create(name: 'A History of Quidditch')
+
+    assert_equal iarticle.author_inv.object_id, iauthor.object_id
+  end
+
   # describe "inverse of on belongs_to in join models ensures the join instance is saved
   #  if we build and save the subject of a has_many :through."
   #
