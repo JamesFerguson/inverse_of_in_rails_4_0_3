@@ -1,8 +1,24 @@
 require 'test_helper'
 
 class SentenceInvTest < ActiveSupport::TestCase
-  # describe "inverse of on belongs_to in join models ensures the join instance is saved 
-  #  if we build and save the subject of a has_many :through.
+  # describe "inverse_of on simple has_one/belongs_to relations"
+  #
+  test "without inverse_of on has_one user.email triggers a db hit" do
+    user = User.create(name: 'Harry')
+    email = user.email = Email.create(name: 'harry@hogwarts.edu.uk')
+
+    assert_not_equal email.user.object_id, user.object_id
+  end
+
+  test "with inverse_of on has_one user.email no db hit and object_ids are equal/one instance" do
+    iuser = UserInv.create(name: 'Harry')
+    iemail = iuser.email_inv = EmailInv.create(name: 'harry@hogwarts.edu.uk')
+
+    assert_equal iemail.user_inv.object_id, iuser.object_id
+  end
+
+  # describe "inverse of on belongs_to in join models ensures the join instance is saved
+  #  if we build and save the subject of a has_many :through."
   #
   test "without inverse_of the criminal's sentence join record is never saved and the link to the prison doeesn't exist" do
     prison = Prison.create(name: 'Alcatraz')
