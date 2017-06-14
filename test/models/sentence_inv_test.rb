@@ -21,4 +21,12 @@ class SentenceInvTest < ActiveSupport::TestCase
     assert_equal icriminal.prison_invs.first, iprison
     assert_equal icriminal.sentence_invs.size, 1
   end
+
+  test "when using create instead of build, both declarations result in a correctly saved join record" do
+    prison = Prison.create(name: 'Alcatraz')
+    criminal = prison.criminals.create(name: 'Al Capone')
+
+    assert_equal criminal.prisons.first, prison
+    assert_equal criminal.sentences.size, 1
+  end
 end
