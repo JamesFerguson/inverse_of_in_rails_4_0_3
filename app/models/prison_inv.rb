@@ -1,4 +1,4 @@
 class PrisonInv < ActiveRecord::Base
-  has_many :sentences, inverse_of: :prison
-  has_many :criminals, through: :sentences #, inverse_of: :prisons
+  has_many :sentence_invs, inverse_of: :prison_inv
+  has_many :criminal_invs, through: :sentence_invs #, inverse_of: :prisons
 end
