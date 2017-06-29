@@ -17,6 +17,13 @@ class SentenceInvTest < ActiveSupport::TestCase
     assert_equal iemail.user_inv.object_id, iuser.object_id
   end
 
+  test "with inverse_of on email belongs_to user no db hit and object_ids are equal/one instance" do
+    iemail = EmailInv.create(name: 'harry@hogwarts.edu.uk')
+    iuser = iemail.user_inv = UserInv.create(name: 'Harry')
+
+    assert_equal iuser.email_inv.object_id, iemail.object_id
+  end
+
   # describe "inverse_of on simple has_many/belongs_to relations"
   #
   test "without inverse_of on has_many articles.author triggers a db hit" do
