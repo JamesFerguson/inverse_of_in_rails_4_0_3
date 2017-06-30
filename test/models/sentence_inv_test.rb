@@ -47,11 +47,28 @@ class SentenceInvTest < ActiveSupport::TestCase
     assert_not_equal author.articles.first.object_id, article.object_id
   end
 
-  test "with inverse_of on belongs_to author.articles still triggers db hit - has no benefit" do
+  test "with inverse_of on belongs_to, author.articles still triggers db hit - has no benefit" do
     iarticle = ArticleInv.create(name: 'A History of Quidditch')
     iauthor = iarticle.author_inv = AuthorInv.create(name: 'Rita Skeeter')
 
     assert_not_equal iauthor.article_invs.first.object_id, iarticle.object_id
+  end
+
+  # describe inverse_of with has_many/belongs_to and accepts_nested_attributes_for
+  test "without inverse_of on author_inv.article_invs, creating nested model fails due to validation error" do
+    params = { name: 'Rita Skeeter', articles_attributes: [{ name: 'A History of Quidditch' }] }
+
+    assert_raises ActiveRecord::RecordInvalid do
+      Author.create!(params)
+    end
+  end
+
+  test "with inverse_of on author_inv.article_invs, creating nested model succeeds and passes validation" do
+    params = { name: 'Rita Skeeter', article_invs_attributes: [{ name: 'A History of Quidditch' }] }
+
+    assert_nothing_raised do
+      AuthorInv.create!(params)
+    end
   end
 
   # describe "inverse of on belongs_to in join models ensures the join instance is saved
