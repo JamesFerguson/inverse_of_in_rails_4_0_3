@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170614075407) do
+ActiveRecord::Schema.define(version: 20170630075621) do
 
   create_table "article_invs", force: true do |t|
     t.string   "name"
@@ -43,6 +43,34 @@ ActiveRecord::Schema.define(version: 20170614075407) do
     t.datetime "updated_at"
   end
 
+  create_table "child_invs", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "child_invs_parent_invs", id: false, force: true do |t|
+    t.integer "child_inv_id",  null: false
+    t.integer "parent_inv_id", null: false
+  end
+
+  add_index "child_invs_parent_invs", ["child_inv_id", "parent_inv_id"], name: "index_child_invs_parent_invs_on_child_inv_id_and_parent_inv_id"
+  add_index "child_invs_parent_invs", ["parent_inv_id", "child_inv_id"], name: "index_child_invs_parent_invs_on_parent_inv_id_and_child_inv_id"
+
+  create_table "children", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "children_parents", id: false, force: true do |t|
+    t.integer "child_id",  null: false
+    t.integer "parent_id", null: false
+  end
+
+  add_index "children_parents", ["child_id", "parent_id"], name: "index_children_parents_on_child_id_and_parent_id"
+  add_index "children_parents", ["parent_id", "child_id"], name: "index_children_parents_on_parent_id_and_child_id"
+
   create_table "criminal_invs", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -72,6 +100,18 @@ ActiveRecord::Schema.define(version: 20170614075407) do
   end
 
   add_index "emails", ["user_id"], name: "index_emails_on_user_id"
+
+  create_table "parent_invs", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "parents", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "prison_invs", force: true do |t|
     t.string   "name"
