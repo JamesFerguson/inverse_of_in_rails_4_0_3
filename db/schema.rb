@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170630075621) do
+ActiveRecord::Schema.define(version: 20170703093614) do
 
   create_table "article_invs", force: true do |t|
     t.string   "name"
@@ -70,6 +70,18 @@ ActiveRecord::Schema.define(version: 20170630075621) do
 
   add_index "children_parents", ["child_id", "parent_id"], name: "index_children_parents_on_child_id_and_parent_id"
   add_index "children_parents", ["parent_id", "child_id"], name: "index_children_parents_on_parent_id_and_child_id"
+
+  create_table "course_invs", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "courses", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "criminal_invs", force: true do |t|
     t.string   "name"
@@ -146,6 +158,26 @@ ActiveRecord::Schema.define(version: 20170630075621) do
 
   add_index "sentences", ["criminal_id"], name: "index_sentences_on_criminal_id"
   add_index "sentences", ["prison_id"], name: "index_sentences_on_prison_id"
+
+  create_table "teaching_assistant_invs", force: true do |t|
+    t.string   "name"
+    t.integer  "teachable_inv_id"
+    t.string   "teachable_inv_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "teaching_assistant_invs", ["teachable_inv_id", "teachable_inv_type"], name: "index_teach_asst_invs_on_teachable_inv_id_n_teachable_inv_type"
+
+  create_table "teaching_assistants", force: true do |t|
+    t.string   "name"
+    t.integer  "teachable_id"
+    t.string   "teachable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "teaching_assistants", ["teachable_id", "teachable_type"], name: "index_teaching_assistants_on_teachable_id_and_teachable_type"
 
   create_table "user_invs", force: true do |t|
     t.string   "name"
