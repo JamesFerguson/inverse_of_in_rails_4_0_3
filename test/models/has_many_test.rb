@@ -20,14 +20,16 @@ class HasManyTest < ActiveSupport::TestCase
   # doesn't reuse object from belongs_to side
   test "without inverse_of on belongs_to author.articles triggers a db hit" do
     article = Article.create(name: 'A History of Quidditch')
-    author = article.author = Author.create(name: 'Rita Skeeter')
+    author = article.build_author(name: 'Rita Skeeter')
+    author.save!
 
     assert_not_equal author.articles.first.object_id, article.object_id
   end
 
   test "with inverse_of on belongs_to, author.articles still triggers db hit - has no benefit" do
     iarticle = ArticleInv.create(name: 'A History of Quidditch')
-    iauthor = iarticle.author_inv = AuthorInv.create(name: 'Rita Skeeter')
+    iauthor = iarticle.build_author_inv(name: 'Rita Skeeter')
+    iauthor.save!
 
     assert_not_equal iauthor.article_invs.first.object_id, iarticle.object_id
   end
