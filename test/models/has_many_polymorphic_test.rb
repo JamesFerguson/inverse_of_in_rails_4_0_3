@@ -29,4 +29,21 @@ class HasManyPolymorphicTest < ActiveSupport::TestCase
 
     assert_not_equal icourse.teaching_assistant_invs.first.object_id, iteaching_assistant.object_id
   end
+
+  # describe accepts_nested_attributes_for behaviour - fails validation without inverse_of
+  test "without inverse_of on course.teaching_assistants, creating nested model fails due to validation error" do
+    params = { name: 'Defense Against the Dark Arts', teaching_assistants_attributes: [{ name: 'Mad Eye Moody' }] }
+
+    assert_raises ActiveRecord::RecordInvalid do
+      Course.create!(params)
+    end
+  end
+
+  test "with inverse_of on course_inv.teaching_assistant_invs, creating nested model succeeds and passes validation" do
+    params = { name: 'Defense Against the Dark Arts', teaching_assistant_invs_attributes: [{ name: 'Mad Eye Moody' }] }
+
+    assert_nothing_raised do
+      CourseInv.create!(params)
+    end
+  end
 end
