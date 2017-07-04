@@ -35,7 +35,7 @@ class HasManyTest < ActiveSupport::TestCase
   end
 
   # describe accepts_nested_attributes_for behaviour - fails validation without inverse_of
-  test "without inverse_of on author_inv.article_invs, creating nested model fails due to validation error" do
+  test "without inverse_of on author.articles, creating nested model fails due to validation error" do
     params = { name: 'Rita Skeeter', articles_attributes: [{ name: 'A History of Quidditch' }] }
 
     assert_raises ActiveRecord::RecordInvalid do
