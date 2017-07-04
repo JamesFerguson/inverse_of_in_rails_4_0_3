@@ -2,21 +2,31 @@ require 'test_helper'
 
 # describe inverse_of on 'has_many...polymorphic: true' relations
 class HasManyPolymorphicTest < ActiveSupport::TestCase
-  # describe "inverse_of on simple has_one/belongs_to relations"
-  #
-  #test "without inverse_of on has_one user.email triggers a db hit" do
-    #user = User.create(name: 'Harry')
-    #email = user.email = Email.create(name: 'harry@hogwarts.edu.uk')
+  test "without inverse_of on has_many (opposite polymorphic belongs_to) (course -> ta) still triggers a db hit" do
+    course = Course.create(name: 'Exploding Code and How to make it go Boom')
+    course.teaching_assistants << (teaching_assistant = TeachingAssistant.create(name: 'Gavrilo Princip'))
 
-    #assert_not_equal email.user.object_id, user.object_id
-  #end
+    assert_not_equal teaching_assistant.teachable.object_id, course.object_id
+  end
 
-  #test "with inverse_of on has_one user.email no db hit and object_ids are equal/one instance" do
-    #iuser = UserInv.create(name: 'Harry')
-    #iemail = iuser.email_inv = EmailInv.create(name: 'harry@hogwarts.edu.uk')
+  test "with inverse_of on has_many (opposite polymorphic belongs_to) (icourse -> ita) no db hit" do
+    icourse = CourseInv.create(name: 'Exploding Code and How to make it go Boom')
+    icourse.teaching_assistant_invs << (iteaching_assistant = TeachingAssistantInv.create(name: 'Gavrilo Princip'))
 
-    #assert_equal iemail.user_inv.object_id, iuser.object_id
-  #end
+    assert_equal iteaching_assistant.teachable_inv.object_id, icourse.object_id
+  end
 
+  test "without inverse_of on both sides of 'has_many polymorphic: true' (ta -> course) still triggers a db hit" do
+    iteaching_assistant = TeachingAssistant.create(name: 'Gavrilo Princip')
+    icourse = iteaching_assistant.teachable = Course.create(name: 'Exploding Code and How to make it go Boom')
 
+    assert_not_equal icourse.teaching_assistants.first.object_id, iteaching_assistant.object_id
+  end
+
+  test "with inverse_of on 'belongs_to polymorphic: true' (ita -> icourse) still triggers a db hit" do
+    iteaching_assistant = TeachingAssistantInv.create(name: 'Gavrilo Princip')
+    icourse = iteaching_assistant.teachable_inv = CourseInv.create(name: 'Exploding Code and How to make it go Boom')
+
+    assert_not_equal icourse.teaching_assistant_invs.first.object_id, iteaching_assistant.object_id
+  end
 end
