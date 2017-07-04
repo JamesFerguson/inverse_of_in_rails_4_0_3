@@ -30,4 +30,21 @@ class HasOneTest < ActiveSupport::TestCase
 
     assert_equal iuser.email_inv.object_id, iemail.object_id
   end
+
+  # describe accepts_nested_attributes_for behaviour - fails validation without inverse_of
+  test "without inverse_of on user.emails, creating nested model fails due to validation error" do
+    params = { name: 'Rita Skeeter', email_attributes: { name: 'rita@dailyprophet.wiz.uk' } }
+
+    assert_raises ActiveRecord::RecordInvalid do
+      User.create!(params)
+    end
+  end
+
+  test "with inverse_of on user_inv.email_inv, creating nested model succeeds and passes validation" do
+    params = { name: 'Rita Skeeter', email_inv_attributes: { name: 'rita@dailyprophet.wiz.uk' } }
+
+    assert_nothing_raised do
+      UserInv.create!(params)
+    end
+  end
 end
