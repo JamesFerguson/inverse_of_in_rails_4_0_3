@@ -28,4 +28,33 @@ class HasManyThroughTest < ActiveSupport::TestCase
     assert_equal criminal.prisons.first, prison
     assert_equal criminal.sentences.size, 1
   end
+
+  # inverse_of on has_many to join table still save db hit
+  test "without inverse_of on has_many sentences.prison triggers a db hit" do
+    prison = Prison.create(name: 'Azkaban')
+    sentence = prison.sentences.create(length: 25)
+
+    assert_not_equal sentence.prison.object_id, prison.object_id
+  end
+
+  test "with inverse_of on has_many sentences.prison no db hit and object_ids are equal/one instance" do
+    iprison = PrisonInv.create(name: 'Azkaban')
+    isentence = iprison.sentence_invs.create(length: 25)
+
+    assert_equal isentence.prison_inv.object_id, iprison.object_id
+  end
+
+  test "without inverse_of on has_many sentences.criminal triggers a db hit" do
+    criminal = Criminal.create(name: 'Sirius Black')
+    sentence = criminal.sentences.create(length: 25)
+
+    assert_not_equal sentence.criminal.object_id, criminal.object_id
+  end
+
+  test "with inverse_of on has_many sentences.criminal no db hit and object_ids are equal/one instance" do
+    icriminal = CriminalInv.create(name: 'Sirius Black')
+    isentence = icriminal.sentence_invs.create(length: 25)
+
+    assert_equal isentence.criminal_inv.object_id, icriminal.object_id
+  end
 end
